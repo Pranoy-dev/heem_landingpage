@@ -124,7 +124,7 @@ function StepsCarousel() {
             data-index={i}
             aria-roledescription="slide"
             aria-label={`Step ${i + 1} of ${steps.length}`}
-            className="flex h-[calc(100svh-13rem)] w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden rounded-[28px] border border-border/70 bg-paper md:h-auto"
+            className="flex h-[calc(100svh-9rem)] w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden rounded-[28px] border border-border/70 bg-paper md:h-auto"
           >
             <div className="shrink-0 px-5 pt-5 md:px-6 md:pt-6">
               <span className="font-heading text-3xl text-clay/80 italic md:text-4xl">0{i + 1}</span>

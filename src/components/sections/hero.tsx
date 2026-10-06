@@ -40,20 +40,20 @@ function RotatingPiece() {
 
   return (
     <span
-      className="@container relative my-[0.02em] block h-[1.15em] overflow-hidden text-clay italic [mask-image:linear-gradient(to_bottom,transparent,black_18%,black_82%,transparent)]"
+      className="@container relative my-[0.02em] block h-[1.45em] overflow-hidden text-clay italic [mask-image:linear-gradient(to_bottom,transparent,black_8%,black_100%)]"
     >
       <span className="sr-only">{pieces.join(", ")}</span>
       <AnimatePresence initial={false}>
         <motion.span
           key={pieces[index]}
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 flex h-full items-center"
+          className="absolute inset-x-0 top-0 flex h-full items-start pt-[0.06em]"
           initial={reduce ? false : { y: 18, opacity: 0, filter: "blur(8px)" }}
           animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
           exit={{ y: -18, opacity: 0, filter: "blur(8px)" }}
           transition={{ duration: 0.7, ease }}
         >
-          <span className="text-[min(1em,12.2cqi)] leading-none whitespace-nowrap">{pieces[index]}</span>
+          <span className="text-[min(1em,12.2cqi)] leading-[1.15] whitespace-nowrap">{pieces[index]}</span>
         </motion.span>
       </AnimatePresence>
     </span>
@@ -78,7 +78,7 @@ export function Hero() {
             <span className="whitespace-nowrap">Second-hand.</span> Fast.
           </h1>
           <p className="animate-rise mt-5 max-w-md text-base leading-relaxed text-espresso/75 [animation-delay:180ms] sm:mt-7 sm:text-lg">
-            Blocket, Tradera, Facebook Marketplace and Mjuk, all in one feed, filtered to your style.
+            Every marketplace, in one place.
           </p>
           <div
             id="hero-cta"

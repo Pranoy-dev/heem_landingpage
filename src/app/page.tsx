@@ -4,7 +4,6 @@ import { Hero } from "@/components/sections/hero";
 import { HowItWorks } from "@/components/sections/how-it-works";
 import { Marketplaces } from "@/components/sections/marketplaces";
 import { Nav } from "@/components/sections/nav";
-import { StickyCta } from "@/components/sticky-cta";
 
 export default function Home() {
   return (
@@ -17,7 +16,6 @@ export default function Home() {
         <Faq />
       </main>
       <Footer />
-      <StickyCta />
     </>
   );
 }

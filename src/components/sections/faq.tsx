@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Reveal } from "@/components/reveal";
 import { faqs } from "@/lib/content";
@@ -31,15 +30,10 @@ export function Faq() {
             A few things <em className="text-clay">people ask.</em>
           </h2>
           <p className="mt-4 max-w-sm leading-relaxed text-espresso/70 sm:mt-6">
-            Something else? Visit{" "}
-            <Link href="/support" className="underline underline-offset-4 hover:text-espresso">
-              support
-            </Link>{" "}
-            or email{" "}
+            Other questions? Email us:{" "}
             <a href={`mailto:${site.email}`} className="underline underline-offset-4 hover:text-espresso">
               {site.email}
             </a>
-            .
           </p>
         </Reveal>
         <Reveal delay={0.1}>

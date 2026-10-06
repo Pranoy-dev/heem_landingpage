@@ -19,7 +19,7 @@ export const faqs = [
   },
   {
     q: "Where does it work?",
-    a: "Greater Stockholm, with prices in kronor. You can open the app from anywhere. The furniture is in Stockholm.",
+    a: "The first version focuses on the Stockholm region.",
   },
   {
     q: "Is there an Android app?",
@@ -27,6 +27,6 @@ export const faqs = [
   },
   {
     q: "How do I delete my account?",
-    a: "In the app, open Profile and tap Delete account. It's gone straight away. If you've already deleted the app, use our delete account page.",
+    a: "In the app, open Profile and tap Delete account. It's gone straight away.",
   },
 ];
