@@ -73,12 +73,12 @@ export function Hero() {
       <div className="container-page grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
         <div className="max-w-xl">
           <h1 className="animate-rise text-[clamp(2.75rem,7vw,5.6rem)] leading-[0.95] text-espresso">
-            Find a
+            Discover a
             <RotatingPiece />
             <span className="whitespace-nowrap">Second-hand.</span> Fast.
           </h1>
           <p className="animate-rise mt-5 max-w-md text-base leading-relaxed text-espresso/75 [animation-delay:180ms] sm:mt-7 sm:text-lg">
-            Every marketplace, in one place.
+            Curated second-hand, minus endless search.
           </p>
           <div
             id="hero-cta"

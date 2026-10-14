@@ -199,6 +199,15 @@
   }
 }
 
+@keyframes dot-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes rise {
   from {
     opacity: 0;

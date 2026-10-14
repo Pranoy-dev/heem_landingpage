@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { ListingScreen, QuizScreen, RoomScreen, SavedScreen, StyleScreen } from "@/components/app-screens";
 import { PhoneMockup } from "@/components/phone-mockup";
 import { Reveal } from "@/components/reveal";
@@ -83,10 +83,44 @@ export function HowItWorks() {
   );
 }
 
+const STEP_MS = 4500;
+const RESUME_AFTER_TOUCH_MS = 5000;
+
 function StepsCarousel() {
+  const rootRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLOListElement>(null);
   const cardRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const resumeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [active, setActive] = useState(0);
+  const [inView, setInView] = useState(false);
+  const [pageHidden, setPageHidden] = useState(false);
+  const [holding, setHolding] = useState(false);
+  const reduce = useReducedMotion();
+  const paused = !inView || pageHidden || holding;
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold: 0.15 });
+    observer.observe(root);
+    const onVisibility = () => setPageHidden(document.hidden);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    };
+  }, []);
+
+  const hold = () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    setHolding(true);
+  };
+
+  const release = () => {
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => setHolding(false), RESUME_AFTER_TOUCH_MS);
+  };
 
   useEffect(() => {
     const track = trackRef.current;
@@ -103,16 +137,41 @@ function StepsCarousel() {
     return () => observer.disconnect();
   }, []);
 
-  const goTo = (i: number) => {
-    const track = trackRef.current;
-    const card = cardRefs.current[i];
-    if (track && card) track.scrollTo({ left: card.offsetLeft - track.offsetLeft - 20, behavior: "smooth" });
-  };
+  const goTo = useCallback(
+    (i: number) => {
+      const track = trackRef.current;
+      const card = cardRefs.current[i];
+      if (track && card) {
+        track.scrollTo({
+          left: card.offsetLeft - track.offsetLeft - 20,
+          behavior: reduce ? "auto" : "smooth",
+        });
+      }
+    },
+    [reduce]
+  );
+
+  useEffect(() => {
+    if (paused) return;
+    const id = window.setTimeout(() => goTo((active + 1) % steps.length), STEP_MS);
+    return () => window.clearTimeout(id);
+  }, [paused, active, goTo]);
 
   return (
-    <div className="mt-10 lg:hidden" role="region" aria-roledescription="carousel" aria-label="How Heem works">
+    <div
+      ref={rootRef}
+      className="mt-10 lg:hidden"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label="How Heem works"
+    >
       <ol
         ref={trackRef}
+        onPointerDown={hold}
+        onPointerUp={release}
+        onPointerCancel={release}
+        onTouchStart={hold}
+        onTouchEnd={release}
         className="no-scrollbar -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-2 sm:-mx-8 sm:scroll-px-8 sm:px-8"
       >
         {steps.map(({ title, body, Screen }, i) => (
@@ -126,7 +185,7 @@ function StepsCarousel() {
             aria-label={`Step ${i + 1} of ${steps.length}`}
             className="flex h-[calc(100svh-9rem)] w-[calc(100vw-4.5rem)] shrink-0 snap-start flex-col overflow-hidden rounded-[28px] border border-border/70 bg-paper md:h-auto"
           >
-            <div className="shrink-0 px-5 pt-5 md:px-6 md:pt-6">
+            <div className="h-48 shrink-0 px-5 pt-5 md:h-auto md:px-6 md:pt-6">
               <span className="font-heading text-3xl text-clay/80 italic md:text-4xl">0{i + 1}</span>
               <h3 className="mt-2 text-xl text-espresso md:mt-3 md:text-2xl">{title}</h3>
               <p className="mt-1.5 text-sm leading-relaxed text-espresso/70 md:mt-2 md:text-[15px]">{body}</p>
@@ -149,17 +208,29 @@ function StepsCarousel() {
           <button
             key={step.title}
             type="button"
-            onClick={() => goTo(i)}
+            onClick={() => {
+              hold();
+              release();
+              goTo(i);
+            }}
             aria-label={`Go to step ${i + 1}: ${step.title}`}
             aria-current={active === i ? "step" : undefined}
-            className="grid size-8 place-items-center"
+            className="grid h-8 place-items-center px-1"
           >
             <span
               className={cn(
-                "h-2 rounded-full transition-all duration-300",
-                active === i ? "w-6 bg-espresso" : "w-2 bg-espresso/25"
+                "relative block h-2 overflow-hidden rounded-full bg-espresso/20 transition-[width] duration-500 ease-out",
+                active === i ? "w-10" : "w-2"
               )}
-            />
+            >
+              {active === i && (
+                <span
+                  key={`${active}-${paused}`}
+                  style={{ animationDuration: `${STEP_MS}ms`, animationPlayState: paused ? "paused" : "running" }}
+                  className="absolute inset-0 origin-left animate-[dot-fill_linear_forwards] rounded-full bg-espresso motion-reduce:w-full motion-reduce:animate-none"
+                />
+              )}
+            </span>
           </button>
         ))}
       </div>
